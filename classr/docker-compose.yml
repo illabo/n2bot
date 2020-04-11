@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  classificator:
+    container_name: classificator
+    image: illabo/torclassr:latest
+    restart: unless-stopped
+    ports:
+      - 5000:5000/tcp
+    command: "/usr/local/bin/python main.py"

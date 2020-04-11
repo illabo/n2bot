@@ -1,0 +1,72 @@
+
+# TOML config file for 'n2bot'
+
+# confThold is the value of 1 to 100 of confidence threshold for result of torrent category classification.
+# If classificator's confidence would be below set threshold 
+# user would be asked to confirm the category in chat.
+confThold        = 60
+# List of user ids allowed to communicate with the bot. 
+users            = [""]
+# Download directories paths for different download types.
+[downloadDirectories]
+movies           = "/home/nas/plex-docker/media/movies"
+series           = "/home/nas/plex-docker/media/series"
+general          = "/home/nas/downloads"
+
+[tgClient]
+# token is the Telegram Bot API token string
+# in format "Bot ID:Bot password",
+# ID shouldn't have preceding "bot" as used in API calls,
+# just put the number.
+token            = "123456789:a1b2c3d4e5f6k7j8l9m0123456789"
+# connTimeout is the time in seconds to keep connection alive.
+# Telegram documentation reccomends to set this value resonably high
+# to prevent connectivity problems as DoS protection may be active.
+# However default timeout of 0 is ok for testing purpose.
+# connTimeout defaults to 0.
+connTimeout      = 120
+
+[proxyConfig]
+# type accepts "socks5", "http" and "https".
+# If empty defaults to "socks5".
+type             = "socks5"
+# validPeriod set in seconds.
+# Tells how long to use randomly acquired proxy before rotate.
+validPeriod      = 900
+# excludeCountries is the string of comma separated ISO 3166-1 alpha-2 country codes.
+# Proxies located in these countries would be avoided.
+excludeCountries = "RU,CN,IR,BH,ID,PK"
+# urlTemplate is the string template to fill with proxy type and country exclusions.
+# It would be just fmt.Sprintf'ed. If empty no proxy used.
+# Some examples:
+# "http://pubproxy.com/api/proxy?type=%s&not_country=%s&post=true&https=true"
+# "https://api.getproxylist.com/proxy?protocol=%s&notCountry=%s&allowsPost=true&allowsHttps=true"
+# "https://gimmeproxy.com/api/getProxy?post=true&supportsHttps=true&protocol=%s&notCountry=%s"
+# "https://api.proxyscrape.com/?request=displayproxies&proxytype=%s&timeout=7000"
+urlTemplate      = ""
+# method to use calling proxy provider api. Defaults to "GET".
+method           = "GET"
+# providertimeout is the time in seconds to wait while proxy server ip:port would be acquired.
+# If the time is exceeded an unproxied request would be done.
+providerTimeout  = 10
+
+[ariaClient]
+# aria2rpcURL is the URL to send RPC calls to.
+# Defaults to "http://localhost:6800/jsonrpc" when empty.
+aria2rpcURL      = "http://localhost:6800/jsonrpc"
+# pollingInterval is the time in seconds to check active tasks status.
+# Status determined by batch of aria2.tellStatus calls for every active task.
+# pollingInterval can't be 0 and defaults to 10 seconds when 0.
+pollingInterval  = 10
+
+[classificator]
+# url to send torrent file to for classification.
+url              = "http://localhost:5000/check"
+
+[storageConfig]
+# backendType is the type of DB used to store per user per download data.
+# Currently only "level" could be set to use goleveldb as the storage backend.
+backendType      = "level"
+# path is the relative path to database file in case of goleveldb, boltdb, badgerdb
+# or connection url for SQLs. Note that only goleveldb is available right now.
+path             = "db"

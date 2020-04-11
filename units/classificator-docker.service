@@ -1,0 +1,12 @@
+[Unit]
+Description=Torrent Classificator Docker
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/home/nas/classificator
+ExecStart=/home/nas/classificator/docker-compose up --force-recreate --remove-orphans
+ExecStop=/home/nas/classificator/docker-compose stop
+
+[Install]
+WantedBy=multi-user.target

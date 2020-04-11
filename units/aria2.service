@@ -1,0 +1,13 @@
+[Unit]
+Description=Aria2c download manager
+After=network.target
+
+[Service]
+Type=simple
+User=nas
+ExecStart=/usr/bin/aria2c -D -c --enable-rpc --rpc-listen-all --rpc-listen-port=6800 --console-log-level=warn
+KillSignal=SIGHUP
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

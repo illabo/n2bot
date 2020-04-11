@@ -1,0 +1,14 @@
+[Unit]
+Description=Nasbot the Second
+After=aria2.service
+Requires=aria2.service
+Wants=classificator-docker.service
+
+[Service]
+WorkingDirectory=/home/nas/n2bot
+ExecStart=/home/nas/n2bot/n2bot
+KillSignal=SIGHUP
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
