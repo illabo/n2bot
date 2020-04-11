@@ -36,6 +36,7 @@ Short form | Long form | Alternative | Description
 `-d=`directory|`--dir` directory|`-d:`directory|Creates the _subdirectory_ for download within standart directory of a category.
 `-k=`GID|`--kill` GID|`-k:`GID|Stops an aria2 task by the GID provided. User is allowed only to stop the tasks they've initiated. User won't be allowed to stop other user's tasks.
 `-a`|`--tellactive`|`--tell-active`|Returns the list of all active tasks with its GID (aria2 task ID), name, and % of download completeness.
+
 Please note that `-t=` and `-d=` flags would only work in the same message with the magnet link.
 ### Additional thingies
 - iOS workflow to extract a magnet link from web page to clipboard https://www.icloud.com/shortcuts/8a7da7c8c28245c993755031f05239d2. It's quite tricky to copy-paste a magnet link since iOS 13. On a long press Safari fails to preview the link and on a short press it reports that the link is broken. However with this workflow you just need to navigate to the page with a magnet on it. Once executed workflow copies the first found magnet link to clipboard. 
