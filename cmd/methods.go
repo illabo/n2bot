@@ -124,12 +124,14 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 			saveNewTask(statusUpd.OwnerID, statusUpd.GID, &dInfo, db)
 		}
 		if status == "complete" || (compLen != 0 && compLen == totlLen) {
-			tgClt.GetOutChan() <- tg.NewTextMessage(
-				statusUpd.OwnerID,
-				fmt.Sprintf("Download of '%s' to '%s' category is complete!",
-					statusUpd.Bittorrent.Info.Name,
-					dInfo.DLType.String()),
-			)
+			if statusUpd.Bittorrent.Info.Name != "" {
+				tgClt.GetOutChan() <- tg.NewTextMessage(
+					statusUpd.OwnerID,
+					fmt.Sprintf("Download of '%s' to '%s' category is complete!",
+						statusUpd.Bittorrent.Info.Name,
+						dInfo.DLType.String()),
+				)
+			}
 			dInfo.TaskStage = stageSeeding
 			saveNewTask(statusUpd.OwnerID, statusUpd.GID, &dInfo, db)
 		}
