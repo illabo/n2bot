@@ -78,10 +78,10 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 	infos, _ := getTaskInfosByUser(statusUpd.OwnerID, db)
 	dInfo, ok := infos[statusUpd.GID]
 	if ok == false {
-		tgClt.GetOutChan() <- tg.NewTextMessage(
-			statusUpd.OwnerID,
-			"😮Something stupid happened to one of your downloads.",
-		)
+		// tgClt.GetOutChan() <- tg.NewTextMessage(
+		// 	statusUpd.OwnerID,
+		// 	"😮Something stupid happened to one of your downloads.",
+		// )
 		return
 	}
 
@@ -93,6 +93,14 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 				dInfo.BTName,
 				statusUpd.ErrorMessage,
 			),
+		)
+		deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
+		return
+	}
+	if status == "removed" {
+		app.tgClient.GetOutChan() <- tg.NewTextMessage(
+			statusUpd.OwnerID,
+			fmt.Sprintf("Task with GID %s removed.", statusUpd.GID),
 		)
 		deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
 		return
@@ -249,10 +257,6 @@ func handleKillTask(chatID, gid string, app *application) {
 		)
 		return
 	}
-	app.tgClient.GetOutChan() <- tg.NewTextMessage(
-		chatID,
-		fmt.Sprintf("Task with ID %s removed.", gid),
-	)
 }
 
 func handleTellActive(chatID string, app *application) {
