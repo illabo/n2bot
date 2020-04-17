@@ -120,12 +120,12 @@ func (c *Client) KillTask(gid string) error {
 			[]byte(
 				fmt.Sprintf(`{
 			"jsonrpc": "2.0",
-			"id": "someid",
+			"id": "kill-%s",
 			"method": "aria2.remove",
 			"params": [
 			  %q
 			]
-		  }`, gid),
+		  }`, gid, gid),
 			),
 		),
 	)

@@ -50,6 +50,7 @@ type taskStage byte
 const (
 	stageMagnetMeta taskStage = iota
 	stageBTDownload
+	stageSeeding
 )
 
 type downloadType byte

@@ -86,41 +86,34 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 	}
 
 	status := statusUpd.Status
+	if status == "error" {
+		tgClt.GetOutChan() <- tg.NewTextMessage(
+			statusUpd.OwnerID,
+			fmt.Sprintf("Download of '%s' is failed! %s",
+				dInfo.BTName,
+				statusUpd.ErrorMessage,
+			),
+		)
+		deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
+		return
+	}
 	compLen, _ := statusUpd.CompletedLength.Int64()
 	totlLen, _ := statusUpd.TotalLength.Int64()
 	if dInfo.TaskStage == stageMagnetMeta {
 		if status == "active" {
 			tgClt.GetOutChan() <- tg.NewTyping(statusUpd.OwnerID)
 		}
-		if status == "error" {
-			tgClt.GetOutChan() <- tg.NewTextMessage(
-				statusUpd.OwnerID,
-				fmt.Sprintf("Download of '%s' is failed! %s",
-					dInfo.BTName,
-					statusUpd.ErrorMessage,
-				),
-			)
-			deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
-		}
 		if status == "complete" || (compLen != 0 && compLen == totlLen) {
 			handleMagnetCompletion(&dInfo, statusUpd, app)
 		}
 	}
 
-	if dInfo.TaskStage == stageBTDownload && statusUpd.Bittorrent.Info.Name != "" {
-		if status == "active" && dInfo.BTName != statusUpd.Bittorrent.Info.Name {
+	if dInfo.TaskStage == stageBTDownload {
+		if status == "active" &&
+			statusUpd.Bittorrent.Info.Name != "" &&
+			dInfo.BTName != statusUpd.Bittorrent.Info.Name {
 			dInfo.BTName = statusUpd.Bittorrent.Info.Name
 			saveNewTask(statusUpd.OwnerID, statusUpd.GID, &dInfo, db)
-		}
-		if status == "error" {
-			tgClt.GetOutChan() <- tg.NewTextMessage(
-				statusUpd.OwnerID,
-				fmt.Sprintf("Download of '%s' is failed! %s",
-					statusUpd.Bittorrent.Info.Name,
-					statusUpd.ErrorMessage,
-				),
-			)
-			deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
 		}
 		if status == "complete" || (compLen != 0 && compLen == totlLen) {
 			tgClt.GetOutChan() <- tg.NewTextMessage(
@@ -129,8 +122,13 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 					statusUpd.Bittorrent.Info.Name,
 					dInfo.DLType.String()),
 			)
-			deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
+			dInfo.TaskStage = stageSeeding
+			saveNewTask(statusUpd.OwnerID, statusUpd.GID, &dInfo, db)
 		}
+	}
+
+	if dInfo.TaskStage == stageSeeding && status == "complete" {
+		deleteTaskInfo(statusUpd.OwnerID, statusUpd.GID, db)
 	}
 }
 
