@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"n2bot/fatalist"
-	"n2bot/proxyurl"
 	"net/http"
 )
 
 // Client is a type providing the app core with the connectivity to Telegram
 type Client struct {
 	token       string
-	httpClient  *http.Client
+	HttpClient  *http.Client
 	connTimeout uint
 	// inChan is the channel where to get new incoming Telegram messages outside of this package
 	inChan chan ChatMessage
@@ -33,14 +32,6 @@ func (c *Client) GetInChan() <-chan ChatMessage {
 // Consumers can only write to this channel.
 func (c *Client) GetOutChan() chan<- ChatMessage {
 	return c.outChan
-}
-
-// SetProxy lets to setup a random proxy provider.
-// If SetProxy won't called default http.Transport used with systemwide proxy settings if any.
-func (c *Client) SetProxy(p *proxyurl.RandomProxy) {
-	c.httpClient.Transport = &http.Transport{
-		Proxy: p.Get,
-	}
 }
 
 // SetErrorHandler sets a error handler function to Client.
@@ -151,7 +142,7 @@ func (c *Client) startPolling() {
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		res, err := c.httpClient.Do(req)
+		res, err := c.HttpClient.Do(req)
 		if err != nil {
 			if c.errHandler != nil {
 				c.errHandler.LogError(err)
@@ -227,7 +218,7 @@ func (c *Client) waitForOutgoing() {
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		res, err := c.httpClient.Do(req)
+		res, err := c.HttpClient.Do(req)
 		if err != nil {
 			if c.errHandler != nil {
 				c.errHandler.LogError(err)

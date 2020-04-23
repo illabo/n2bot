@@ -26,8 +26,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if cfg.ProxyConfig.ProviderAPIURLTemplate != "" {
-		tc.SetProxy(proxyurl.NewRandomProxy(&cfg.ProxyConfig))
+	if cfg.ProxyConfig.ProxiesSource != "" {
+		proxyurl.NewTransport(&cfg.ProxyConfig).InjectIntoClient(tc.HttpClient)
 	}
 	db, err := storage.NewInstance(&cfg.StorageConfig)
 	if err != nil {
