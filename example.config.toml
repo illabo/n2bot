@@ -28,7 +28,7 @@ connTimeout      = 120
 
 [proxyConfig]
 # proxiesSource is an address of ProxyURL service.
-# See ProxyURL repository for more info.
+# See ProxyURL repository (https://github.com/illabo/proxyurl) for more info.
 proxiesSource    = "http://127.0.0.1:9999/"
 
 [ariaClient]
