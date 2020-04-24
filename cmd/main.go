@@ -42,14 +42,14 @@ func main() {
 		classrClient: cc,
 		db:           db,
 		dirs:         &cfg.Dirs,
-		errHandler:   &fatal,
+		errHandler:   fatal,
 		confThold:    cfg.ConfThold,
 		users:        cfg.Users,
 	}
 
-	tc.SetErrorHandler(&fatal)
-	ac.SetErrorHandler(&fatal)
-	cc.SetErrorHandler(&fatal)
+	tc.SetErrorHandler(fatal)
+	ac.SetErrorHandler(fatal)
+	cc.SetErrorHandler(fatal)
 
 	tc.Run(
 		func(msg tg.ChatMessage) {

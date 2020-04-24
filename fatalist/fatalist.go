@@ -21,9 +21,23 @@ func (f *Fatalist) GetFatalChan() <-chan error {
 	return f.fatalErrChan
 }
 
-func New() Fatalist {
-	return Fatalist{
+// Prevent channels closure in case if listener(s) weren't set in time.
+func (f *Fatalist) chanHelper() {
+	for {
+		select {
+		case e := <-f.logErrChan:
+			f.logErrChan <- e
+		case e := <-f.fatalErrChan:
+			f.fatalErrChan <- e
+		}
+	}
+}
+
+func New() *Fatalist {
+	f := &Fatalist{
 		make(chan error),
 		make(chan error),
 	}
+	go f.chanHelper()
+	return f
 }
