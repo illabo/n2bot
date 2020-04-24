@@ -117,18 +117,20 @@ func handleAriaUpdates(statusUpd *ariactr.TaskStatus, app *application) {
 	}
 
 	if dInfo.TaskStage == stageBTDownload {
+		trimStatName := strings.TrimSpace(statusUpd.Bittorrent.Info.Name)
+		trimInfoName := strings.TrimSpace(dInfo.BTName)
 		if status == "active" &&
-			statusUpd.Bittorrent.Info.Name != "" &&
-			dInfo.BTName != statusUpd.Bittorrent.Info.Name {
-			dInfo.BTName = statusUpd.Bittorrent.Info.Name
+			trimStatName != "" &&
+			trimInfoName != trimStatName {
+			dInfo.BTName = trimStatName
 			saveNewTask(statusUpd.OwnerID, statusUpd.GID, &dInfo, db)
 		}
 		if status == "complete" || (compLen != 0 && compLen == totlLen) {
-			if statusUpd.Bittorrent.Info.Name != "" {
+			if trimStatName != "" {
 				tgClt.GetOutChan() <- tg.NewTextMessage(
 					statusUpd.OwnerID,
 					fmt.Sprintf("Download of '%s' to '%s' category is complete!",
-						statusUpd.Bittorrent.Info.Name,
+						trimStatName,
 						dInfo.DLType.String()),
 				)
 			}
@@ -274,7 +276,7 @@ func handleTellActive(chatID string, app *application) {
 	for _, s := range statuses {
 		gid := s.GID
 		name := s.Bittorrent.Info.Name
-		if name == "" {
+		if strings.TrimSpace(name) == "" {
 			name = s.Infohash
 		}
 		if len(name) > 50 {
